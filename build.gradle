@@ -1,0 +1,57 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.1.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java'
+}
+
+group = 'com.iit.ppvis'
+version = '0.0.1-SNAPSHOT'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+
+ext {
+    lombokVersion = '1.18.8'
+    mapstructVersion = '1.3.0.Final'
+    postgresqlVersion = '42.2.6'
+}
+
+
+dependencies {
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation "org.mapstruct:mapstruct-jdk8:$mapstructVersion"
+    implementation "org.projectlombok:lombok:$lombokVersion"
+    implementation 'org.flywaydb:flyway-core'
+    implementation "org.yaml:snakeyaml"
+
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    compile "org.springframework:spring-jdbc"
+    compile "org.postgresql:postgresql:$postgresqlVersion"
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
