@@ -1,7 +1,7 @@
 package com.iit.ppvis.entity;
 
 import com.iit.ppvis.model.Book;
-import com.iit.ppvis.model.enums.BookStatus;
+import com.iit.ppvis.model.enums.Subject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +15,8 @@ import static javax.persistence.GenerationType.AUTO;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "book_catalog")
-public class BookCatalogRecord {
+@Table(name = "book_storage")
+public class BookStorageRecord {
 
     @Id
     @GeneratedValue(strategy = AUTO)
@@ -26,10 +26,11 @@ public class BookCatalogRecord {
     @Column(name = "book", nullable = false)
     private Book book;
 
-    @Column(name = "rate", nullable = false)
-    private Double rate;
+    @Column(name = "subject", nullable = false)
+    private Subject subject;
 
-    @Column(name = "status", nullable = false)
-    private BookStatus status;
+    @Column(name = "genre", nullable = false)
+    private String genre;
 
 }
+//TODO: genre must be nested enum

@@ -1,12 +1,12 @@
 package com.iit.ppvis.entity;
 
 import com.iit.ppvis.model.Book;
-import com.iit.ppvis.model.enums.BookStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.UUID;
 
 import static javax.persistence.GenerationType.AUTO;
@@ -15,8 +15,8 @@ import static javax.persistence.GenerationType.AUTO;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "book_catalog")
-public class BookCatalogRecord {
+@Table(name = "visitor_counting")
+public class VisitorCountingRecord {
 
     @Id
     @GeneratedValue(strategy = AUTO)
@@ -26,10 +26,13 @@ public class BookCatalogRecord {
     @Column(name = "book", nullable = false)
     private Book book;
 
-    @Column(name = "rate", nullable = false)
-    private Double rate;
+    @Column(name = "visitor_last_name", nullable = false)
+    private String visitorLastName;
 
-    @Column(name = "status", nullable = false)
-    private BookStatus status;
+    @Column(name = "taken_date", nullable = false)
+    private Instant takenDate;
+
+    @Column(name = "returned_date")
+    private Instant returnedDate;
 
 }

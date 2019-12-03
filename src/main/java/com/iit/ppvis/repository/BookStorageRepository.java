@@ -1,4 +1,11 @@
 package com.iit.ppvis.repository;
 
-public interface BookStorageRepository {
+import com.iit.ppvis.entity.BookStorageRecord;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.UUID;
+
+@Repository
+public interface BookStorageRepository extends JpaRepository<BookStorageRecord, UUID> {
 }

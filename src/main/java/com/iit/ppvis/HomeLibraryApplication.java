@@ -11,3 +11,5 @@ public class HomeLibraryApplication {
 	}
 
 }
+//TODO: columns as objects
+//TODO: add base schema
