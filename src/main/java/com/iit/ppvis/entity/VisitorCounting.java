@@ -1,6 +1,5 @@
 package com.iit.ppvis.entity;
 
-import com.iit.ppvis.model.Book;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,15 +15,15 @@ import static javax.persistence.GenerationType.AUTO;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "visitor_counting")
-public class VisitorCountingRecord {
+public class VisitorCounting {
 
     @Id
     @GeneratedValue(strategy = AUTO)
     @Column(name = "id", nullable = false, updatable = false)
     protected UUID id;
 
-    @Column(name = "book", nullable = false)
-    private Book book;
+    @Column(name = "book_name", nullable = false)
+    private String bookName;
 
     @Column(name = "visitor_last_name", nullable = false)
     private String visitorLastName;

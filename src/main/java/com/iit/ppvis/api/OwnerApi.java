@@ -1,50 +1,32 @@
 package com.iit.ppvis.api;
 
+import com.iit.ppvis.model.AllBookInfo;
+import com.iit.ppvis.model.WorkWithBookRequest;
+import com.iit.ppvis.service.BookService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.jdbc.WorkExecutor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/owner")
+@RequestMapping("/api/v1/owner/book")
 public class OwnerApi {
 
-    @PostMapping("/visitor-counting/create")
-    public ResponseEntity<Void> createVisitorCountingRecord() {
+    private final BookService bookService;
+
+    @PostMapping("/add")
+    public ResponseEntity<Void> add(@RequestBody AllBookInfo info) {
+        bookService.addToLibrary(info);
         return new ResponseEntity<>(CREATED);
     }
 
-    @PostMapping("/book-catalog/add")
-    public ResponseEntity<Void> addBookToCatalog() {
-        return new ResponseEntity<>(CREATED);
-    }
-
-    @PostMapping("/book-storage/add")
-    public ResponseEntity<Void> addBookToStorage() {
-        return new ResponseEntity<>(CREATED);
-    }
-
-    @PutMapping("/visitor-counting/update")
-    public ResponseEntity<Void> updateVisitorCountingRecord() {
-        return new ResponseEntity<>(OK);
-    }
-
-    @DeleteMapping("/book-catalog/delete")
-    public ResponseEntity<Void> deleteBookFromCatalog() {
-        return new ResponseEntity<>(OK);
-    }
-
-    @DeleteMapping("/book-storage/delete")
-    public ResponseEntity<Void> deleteBookFromStorage() {
-        return new ResponseEntity<>(OK);
-    }
-
-    @DeleteMapping("/visitor-profile/book/delete")
-    public ResponseEntity<Void> deleteBookFromVisitorProfiles() {
-        return new ResponseEntity<>(OK);
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> delete(@RequestBody WorkWithBookRequest request) {
+        bookService.delete(request);
+        return new ResponseEntity<>(NO_CONTENT);
     }
 
 }

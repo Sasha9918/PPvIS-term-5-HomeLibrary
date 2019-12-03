@@ -1,7 +1,5 @@
 package com.iit.ppvis.entity;
 
-import com.iit.ppvis.model.Book;
-import com.iit.ppvis.model.ReadBook;
 import com.iit.ppvis.model.enums.VisitorRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +16,7 @@ import static javax.persistence.GenerationType.AUTO;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "visitor_profile")
-public class VisitorProfile {
+public class Profile {
 
     @Id
     @GeneratedValue(strategy = AUTO)
@@ -28,19 +26,19 @@ public class VisitorProfile {
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name", unique = true, nullable = false)
     private String lastName;
 
     @Column(name = "role", nullable = false)
     private VisitorRole role;
 
     @Column(name = "favourite")
-    private List<Book> favouriteBooks;
+    private List<String> favouriteBooks;
 
     @Column(name = "planned_to_read")
-    private List<Book> plannedToReadBooks;
+    private List<String> plannedToReadBooks;
 
     @Column(name = "read")
-    private List<ReadBook> readBooks;
+    private List<String> readBooks;
 
 }

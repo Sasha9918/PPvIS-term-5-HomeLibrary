@@ -1,5 +1,11 @@
 package com.iit.ppvis.api;
 
+import com.iit.ppvis.model.CreateProfileRequest;
+import com.iit.ppvis.model.AllBookInfo;
+import com.iit.ppvis.model.WorkWithBookRequest;
+import com.iit.ppvis.model.WorkWithReadBookRequest;
+import com.iit.ppvis.service.BookService;
+import com.iit.ppvis.service.ProfilesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,58 +18,39 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/api/v1/visitor")
 public class VisitorApi {
 
-    @PostMapping("/create")
-    public ResponseEntity<Void> createProfile() {
+    private final BookService bookService;
+    private final ProfilesService profilesService;
+
+    @PostMapping("/profile/create")
+    public ResponseEntity<Void> createProfile(CreateProfileRequest request) {
+        profilesService.createProfile(request);
         return new ResponseEntity<>(CREATED);
     }
 
-    @GetMapping("/book/search")
-    public ResponseEntity<Void> searchBook() {
-        return new ResponseEntity<>(OK);
-    }
-
     @GetMapping("/book/take")
-    public ResponseEntity<Void> takeBook() {
-        return new ResponseEntity<>(OK);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<Void> searchVisitor() {
-        return new ResponseEntity<>(OK);
-    }
-
-    @PutMapping("/book/rate")
-    public ResponseEntity<Void> rateBook() {
-        return new ResponseEntity<>(OK);
-    }
-
-    @PutMapping("/book/report-taking")
-    public ResponseEntity<Void> reportTakingBook() {
-        return new ResponseEntity<>(OK);
-    }
-
-    @PutMapping("/book/report-returning")
-    public ResponseEntity<Void> reportReturningBook() {
-        return new ResponseEntity<>(OK);
+    public ResponseEntity<AllBookInfo> takeBook(@RequestBody WorkWithBookRequest request) {
+        var response = bookService.take(request);
+        return new ResponseEntity<>(response, OK);
     }
 
     @PutMapping("/book/return")
-    public ResponseEntity<Void> returnBook() {
+    public ResponseEntity<Void> returnBook(@RequestBody WorkWithBookRequest request) {
+        bookService.returnBook(request);
         return new ResponseEntity<>(OK);
     }
 
     @PutMapping("/book/add-to-read")
-    public ResponseEntity<Void> addBookToRead() {
+    public ResponseEntity<Void> addBookToRead(@RequestBody WorkWithReadBookRequest request) {
         return new ResponseEntity<>(OK);
     }
 
     @PutMapping("/book/add-to-favourite")
-    public ResponseEntity<Void> addBookToFavourite() {
+    public ResponseEntity<Void> addBookToFavourite(@RequestBody WorkWithReadBookRequest request) {
         return new ResponseEntity<>(OK);
     }
 
     @PutMapping("/book/add-to-planned-to-read")
-    public ResponseEntity<Void> addBookToPlannedToRead() {
+    public ResponseEntity<Void> addBookToPlannedToRead(@RequestBody WorkWithBookRequest request) {
         return new ResponseEntity<>(OK);
     }
 
