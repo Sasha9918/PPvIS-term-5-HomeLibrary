@@ -6,7 +6,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/home_library
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -14,12 +14,3 @@ spring:
 logging:
   level:
     org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl: ERROR
----
-app:
-  jwt:
-    secret:
-      key: ${APP_JWT_SECRET_KEY:very_secret_key}
----
-token:
-  expiration:
-    time: ${TOKEN_EXPIRATION_TIME:3600}

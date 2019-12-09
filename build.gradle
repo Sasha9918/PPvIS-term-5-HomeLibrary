@@ -39,6 +39,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation "org.mapstruct:mapstruct-jdk8:$mapstructVersion"
     implementation "org.projectlombok:lombok:$lombokVersion"
+    implementation "org.flywaydb:flyway-core"
     implementation "org.yaml:snakeyaml"
 
     compileOnly 'org.projectlombok:lombok'

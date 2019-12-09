@@ -24,13 +24,14 @@ public class Book {
     @Column(name = "author", nullable = false, updatable = false)
     private String author;
 
-    @Column(name = "name", unique = true, nullable = false, updatable = false)
+    @Id
+    @Column(name = "book_name", unique = true, nullable = false, updatable = false)
     private String bookName;
 
     @Column(name = "publisher")
     private String publisher;
 
-    @Column(name = "publisher_year")
+    @Column(name = "publishing_year")
     private Integer publishingYear;
 
 }

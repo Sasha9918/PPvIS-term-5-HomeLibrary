@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.AUTO;
 
 @Data
@@ -29,15 +30,19 @@ public class Profile {
     @Column(name = "last_name", unique = true, nullable = false)
     private String lastName;
 
+    @Enumerated(STRING)
     @Column(name = "role", nullable = false)
     private VisitorRole role;
 
+    @ElementCollection
     @Column(name = "favourite")
     private List<String> favouriteBooks;
 
+    @ElementCollection
     @Column(name = "planned_to_read")
     private List<String> plannedToReadBooks;
 
+    @ElementCollection
     @Column(name = "read")
     private List<String> readBooks;
 

@@ -6,6 +6,7 @@ import com.iit.ppvis.repository.VisitorCountingRepository;
 import com.iit.ppvis.service.VisitorCountingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ public class VisitorCountingServiceImpl implements VisitorCountingService {
     private final VisitorCountingRepository visitorCountingRepository;
 
     @Override
+    @Transactional
     public void create(WorkWithBookRequest request) {
         var record = new VisitorCounting();
         record.setBookName(request.getBookName());
@@ -29,15 +31,17 @@ public class VisitorCountingServiceImpl implements VisitorCountingService {
     }
 
     @Override
+    @Transactional
     public void updateRecord(WorkWithBookRequest request) {
         var record = visitorCountingRepository.findByBookNameAndVisitorLastName(request.getBookName(),
                 request.getVisitorLastName()).orElseThrow(() ->
-                entityNotFoundException(String.format("there is no book with name %s", request.getBookName())));
+                entityNotFoundException(String.format("Book with name %s wasn't taken", request.getBookName())));
         record.setReturnedDate(Instant.now());
         visitorCountingRepository.save(record);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void checkIfBorrowed(String bookName) {
         var records = visitorCountingRepository.findAll().stream()
                 .filter(record -> record.getBookName().equals(bookName) && record.getReturnedDate() == null)

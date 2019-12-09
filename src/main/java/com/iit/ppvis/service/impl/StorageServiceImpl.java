@@ -6,6 +6,7 @@ import com.iit.ppvis.repository.StorageRepository;
 import com.iit.ppvis.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.iit.ppvis.common.utils.ExceptionUtils.entityNotFoundException;
 
@@ -16,6 +17,7 @@ public class StorageServiceImpl implements StorageService {
     private final StorageRepository storageRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public StorageRecord find(String bookName) {
         return storageRepository.findByBookName(bookName).orElseThrow(() -> {
             throw entityNotFoundException(String.format("There is no book with name %s in storage", bookName));
@@ -23,6 +25,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
+    @Transactional
     public void create(AllBookInfo info) {
         var bookStorageRecord = new StorageRecord();
         bookStorageRecord.setBookName(info.getBookName());
@@ -32,6 +35,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
+    @Transactional
     public void delete(String bookName) {
         storageRepository.deleteByBookName(bookName);
     }

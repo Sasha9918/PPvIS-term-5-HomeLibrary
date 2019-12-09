@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.UUID;
 
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.AUTO;
 
 @Data
@@ -25,9 +26,10 @@ public class CatalogRecord {
     @Column(name = "book_name", nullable = false)
     private String bookName;
 
-    @Column(name = "rate", nullable = false)
+    @Column(name = "rate")
     private Double rate;
 
+    @Enumerated(STRING)
     @Column(name = "status", nullable = false)
     private BookStatus status;
 

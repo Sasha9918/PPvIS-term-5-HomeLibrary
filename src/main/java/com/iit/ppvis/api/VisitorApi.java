@@ -23,13 +23,13 @@ public class VisitorApi {
 
     @PostMapping("/profile/create")
     public ResponseEntity<Void> createProfile(CreateProfileRequest request) {
-        profilesService.createProfile(request);
+        profilesService.create(request);
         return new ResponseEntity<>(CREATED);
     }
 
     @GetMapping("/book/take")
-    public ResponseEntity<AllBookInfo> takeBook(@RequestBody WorkWithBookRequest request) {
-        var response = bookService.take(request);
+    public ResponseEntity<AllBookInfo> takeBook(@RequestParam String bookName, @RequestParam String visitorLastName) {
+        var response = bookService.take(bookName, visitorLastName);
         return new ResponseEntity<>(response, OK);
     }
 
@@ -41,18 +41,20 @@ public class VisitorApi {
 
     @PutMapping("/book/add-to-read")
     public ResponseEntity<Void> addBookToRead(@RequestBody WorkWithReadBookRequest request) {
+        bookService.addToReadList(request);
         return new ResponseEntity<>(OK);
     }
 
     @PutMapping("/book/add-to-favourite")
     public ResponseEntity<Void> addBookToFavourite(@RequestBody WorkWithReadBookRequest request) {
+        bookService.addToFavouriteList(request);
         return new ResponseEntity<>(OK);
     }
 
     @PutMapping("/book/add-to-planned-to-read")
     public ResponseEntity<Void> addBookToPlannedToRead(@RequestBody WorkWithBookRequest request) {
+        profilesService.addToPlannedToReadList(request);
         return new ResponseEntity<>(OK);
     }
 
 }
-//TODO: redirect to necessary pages

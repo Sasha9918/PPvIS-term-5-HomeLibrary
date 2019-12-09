@@ -21,6 +21,8 @@ public interface CatalogRepository extends JpaRepository<CatalogRecord, UUID> {
     Optional<CatalogRecord> findByBookNameAndStatus(@Param("bookName") String bookName,
                                                     @Param("statuses") List<BookStatus> statuses);
 
+    Optional<CatalogRecord> findByBookName(String bookName);
+
     void deleteByBookName(String bookName);
 
 }

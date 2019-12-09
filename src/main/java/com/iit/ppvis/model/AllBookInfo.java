@@ -12,7 +12,6 @@ public class AllBookInfo {
     private String genre;
     private String publisher;
     private Integer publishingYear;
-    private Double rate;
     private BookStatus status;
     private Subject subject;
 

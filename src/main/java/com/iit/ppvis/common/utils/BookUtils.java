@@ -26,7 +26,6 @@ public class BookUtils {
         response.setGenre(storageRecord.getGenre());
         response.setPublisher(book.getPublisher());
         response.setPublishingYear(book.getPublishingYear());
-        response.setRate(catalogRecord.getRate());
         response.setStatus(catalogRecord.getStatus());
         response.setSubject(storageRecord.getSubject());
         return response;

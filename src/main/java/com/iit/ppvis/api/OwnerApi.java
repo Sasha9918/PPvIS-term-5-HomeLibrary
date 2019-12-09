@@ -30,4 +30,3 @@ public class OwnerApi {
     }
 
 }
-//TODO: redirect to necessary pages

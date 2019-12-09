@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.UUID;
 
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.AUTO;
 
 @Data
@@ -25,6 +26,7 @@ public class StorageRecord {
     @Column(name = "book_name", nullable = false)
     private String bookName;
 
+    @Enumerated(STRING)
     @Column(name = "subject", nullable = false)
     private Subject subject;
 
@@ -32,4 +34,3 @@ public class StorageRecord {
     private String genre;
 
 }
-//TODO: genre must be nested enum
