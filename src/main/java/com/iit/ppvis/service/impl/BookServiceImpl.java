@@ -1,5 +1,6 @@
 package com.iit.ppvis.service.impl;
 
+import com.iit.ppvis.api.VisitorService;
 import com.iit.ppvis.entity.Book;
 import com.iit.ppvis.model.AllBookInfo;
 import com.iit.ppvis.model.WorkWithBookRequest;
@@ -26,6 +27,7 @@ public class BookServiceImpl implements BookService {
     private final ProfilesService profilesService;
     private final StorageService storageService;
     private final VisitorCountingService visitorCountingService;
+    private final VisitorService visitorService;
 
     @Override
     @Transactional(readOnly = true)

@@ -13,7 +13,7 @@ import static org.springframework.http.HttpStatus.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/owner/book")
-public class OwnerApi {
+public class OwnerService {
 
     private final BookService bookService;
 

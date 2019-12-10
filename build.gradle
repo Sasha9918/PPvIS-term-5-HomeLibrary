@@ -25,19 +25,18 @@ java {
 
 ext {
     lombokVersion = '1.18.8'
-    mapstructVersion = '1.3.0.Final'
-    postgresqlVersion = '42.2.6'
     springfoxVersion = '2.9.2'
+    vaadinVersion = '12.0.6'
 }
 
 
 dependencies {
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
-    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
 
+    implementation "com.vaadin:vaadin-bom:$vaadinVersion"
+    implementation "com.vaadin:vaadin-spring-boot-starter:$vaadinVersion"
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation "org.mapstruct:mapstruct-jdk8:$mapstructVersion"
     implementation "org.projectlombok:lombok:$lombokVersion"
     implementation "org.flywaydb:flyway-core"
     implementation "org.yaml:snakeyaml"
@@ -49,13 +48,7 @@ dependencies {
     compile "io.springfox:springfox-swagger2:$springfoxVersion"
     compile "io.springfox:springfox-swagger-ui:$springfoxVersion"
     compile "org.springframework:spring-jdbc"
-    compile "org.postgresql:postgresql:$postgresqlVersion"
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
+    testImplementation('org.springframework.boot:spring-boot-starter-test') 
 }
-
-test {
-    useJUnitPlatform()
-}
+    
