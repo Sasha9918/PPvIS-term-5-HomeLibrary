@@ -18,7 +18,7 @@ CREATE TABLE book
 (
     id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     author          VARCHAR(255)        NOT NULL,
-    book_name       VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL,
+    book_name       VARCHAR(255) UNIQUE NOT NULL,
     publisher       VARCHAR(255),
     publishing_year int
 );

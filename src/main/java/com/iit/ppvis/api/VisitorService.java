@@ -1,103 +1,92 @@
 package com.iit.ppvis.api;
 
-import com.iit.ppvis.entity.Profile;
-import com.iit.ppvis.model.CreateProfileRequest;
-import com.iit.ppvis.model.AllBookInfo;
-import com.iit.ppvis.model.WorkWithBookRequest;
-import com.iit.ppvis.model.WorkWithReadBookRequest;
-import com.iit.ppvis.model.enums.VisitorRole;
+import com.iit.ppvis.repository.BookRepository;
 import com.iit.ppvis.repository.ProfilesRepository;
-import com.iit.ppvis.service.BookService;
+import com.iit.ppvis.service.CatalogService;
 import com.iit.ppvis.service.ProfilesService;
+import com.iit.ppvis.service.StorageService;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 
+import static com.iit.ppvis.common.utils.BookUtils.prepareBookStatus;
+import static com.iit.ppvis.common.utils.ExceptionUtils.entityNotFoundException;
 import static com.iit.ppvis.model.enums.VisitorRole.fromAuthority;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
 
+@Service
 @RequiredArgsConstructor
 public class VisitorService extends VerticalLayout {
 
-    //в методах необходимы параметры
-
-    private final BookService bookService;
+    private final CatalogService catalogService;
+    private final OwnerService ownerService;
     private final ProfilesService profilesService;
+    private final StorageService storageService;
 
+    private final BookRepository bookRepository;
     private final ProfilesRepository profilesRepository;
 
-    public void createProfile() {
-        removeAll();
-        var layout = new HorizontalLayout();
+    public Label takeBook() {
+        var label = new Label();
+        var bookName = new TextField("Название книги");
+        var visitorLastName = new TextField("Фамилия посетителя");
+
+        var take = new Button("Взять книгу", e -> {
+            var findingLabel = findVisitor(bookName.getValue(), visitorLastName.getValue());
+            label.add(findingLabel);
+        });
+
+        label.add(bookName, visitorLastName, take);
+        return label;
+    }
+
+    private Label findVisitor(String bookName, String lastName) {
+        if (profilesRepository.existsByLastName(lastName)) {
+            findBook(bookName, lastName);
+            return null;
+        } else {
+            var label = new Label("Необходима регистрация");
+            var createProfile = createProfile();
+            label.add(createProfile);
+            return label;
+        }
+    }
+
+    private void findBook(String bookName, String lastName) {
+        var visitor = profilesService.find(lastName);
+        var statuses = prepareBookStatus(visitor.getRole());
+
+        bookRepository.findByBookName(bookName).orElseThrow(() -> {
+            Notification.show(String.format("There is no book with name %s", bookName));
+            throw entityNotFoundException(String.format("There is no book with name %s", bookName));
+        });
+        catalogService.find(bookName, statuses);
+        storageService.find(bookName);
+
+        reportAboutTaking(bookName, lastName);
+    }
+
+    private void reportAboutTaking(String bookName, String lastName) {
+        ownerService.addVisitorCountingRecord(bookName, lastName);
+    }
+
+    private Label createProfile() {
+        var label = new Label();
 
         var firstName = new TextField("Имя");
         var lastName = new TextField("Фамилия");
         var role = new TextField("Роль");//TODO: make enum
 
         var take = new Button("Добавить", e -> {
-            takeBook();
+            profilesService.create(firstName.getValue(), lastName.getValue(), fromAuthority(role.getValue()));
+            Notification.show("Success");
         });
-        layout.add(firstName, lastName, role, take);
-
-        var visitor = new Profile();
-        visitor.setFirstName(firstName.getValue());
-        visitor.setLastName(lastName.getValue());
-        visitor.setRole(fromAuthority(role.getValue()));
-        profilesRepository.save(visitor);
+        label.add(firstName, lastName, role, take);
+        return label;
     }
 
-    public void takeBook() {
-        removeAll();
-        var layout = new HorizontalLayout();
-
-        var bookName = new TextField("Название книги");
-        var visitorLastName = new TextField("Фамилия посетителя");
-
-        layout.add(bookName, visitorLastName);
-        findVisitor(bookName.getValue(), visitorLastName.getValue());
-    }
-
-    private void findVisitor(String bookName, String lastName) {
-        if (profilesRepository.existsByLastName(lastName)) {
-            //findBook(bookName);
-        } else {
-            createProfile();
-        }
-    }
-
-//    @GetMapping("/book/take")
-//    public ResponseEntity<AllBookInfo> takeBook(@RequestParam String bookName, @RequestParam String visitorLastName) {
-//        var response = bookService.take(bookName, visitorLastName);
-//        return new ResponseEntity<>(response, OK);
-//    }
-
-    @PutMapping("/book/return")
-    public ResponseEntity<Void> returnBook(@RequestBody WorkWithBookRequest request) {
-        bookService.returnBook(request);
-        return new ResponseEntity<>(OK);
-    }
-
-    @PutMapping("/book/add-to-read")
-    public ResponseEntity<Void> addBookToRead(@RequestBody WorkWithReadBookRequest request) {
-        bookService.addToReadList(request);
-        return new ResponseEntity<>(OK);
-    }
-
-    @PutMapping("/book/add-to-favourite")
-    public ResponseEntity<Void> addBookToFavourite(@RequestBody WorkWithReadBookRequest request) {
-        bookService.addToFavouriteList(request);
-        return new ResponseEntity<>(OK);
-    }
-
-    @PutMapping("/book/add-to-planned-to-read")
-    public ResponseEntity<Void> addBookToPlannedToRead(@RequestBody WorkWithBookRequest request) {
-        profilesService.addToPlannedToReadList(request);
-        return new ResponseEntity<>(OK);
-    }
 
 }

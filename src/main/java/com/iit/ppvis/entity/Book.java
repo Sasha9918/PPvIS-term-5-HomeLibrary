@@ -24,7 +24,6 @@ public class Book {
     @Column(name = "author", nullable = false, updatable = false)
     private String author;
 
-    @Id
     @Column(name = "book_name", unique = true, nullable = false, updatable = false)
     private String bookName;
 

@@ -4,6 +4,7 @@ import com.iit.ppvis.entity.StorageRecord;
 import com.iit.ppvis.model.AllBookInfo;
 import com.iit.ppvis.repository.StorageRepository;
 import com.iit.ppvis.service.StorageService;
+import com.vaadin.flow.component.notification.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ public class StorageServiceImpl implements StorageService {
     @Transactional(readOnly = true)
     public StorageRecord find(String bookName) {
         return storageRepository.findByBookName(bookName).orElseThrow(() -> {
+            Notification.show(String.format("There is no book with name %s in storage", bookName));
             throw entityNotFoundException(String.format("There is no book with name %s in storage", bookName));
         });
     }

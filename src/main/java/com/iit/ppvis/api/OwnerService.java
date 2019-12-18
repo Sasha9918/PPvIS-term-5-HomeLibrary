@@ -1,32 +1,40 @@
 package com.iit.ppvis.api;
 
-import com.iit.ppvis.model.AllBookInfo;
-import com.iit.ppvis.model.WorkWithBookRequest;
-import com.iit.ppvis.service.BookService;
+import com.iit.ppvis.entity.VisitorCounting;
+import com.iit.ppvis.repository.VisitorCountingRepository;
+import com.vaadin.flow.component.notification.Notification;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.jdbc.WorkExecutor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 
-import static org.springframework.http.HttpStatus.*;
+import java.time.Instant;
+import java.util.stream.Collectors;
 
-@RestController
+import static com.iit.ppvis.common.utils.ExceptionUtils.forbiddenAccessException;
+
+@Service
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/owner/book")
 public class OwnerService {
 
-    private final BookService bookService;
+    private final VisitorCountingRepository visitorCountingRepository;
 
-    @PostMapping("/add")
-    public ResponseEntity<Void> add(@RequestBody AllBookInfo info) {
-        bookService.addToLibrary(info);
-        return new ResponseEntity<>(CREATED);
+
+    void addVisitorCountingRecord(String bookName, String lastName) {
+        checkIfBorrowed(bookName);
+        var record = new VisitorCounting();
+        record.setBookName(bookName);
+        record.setVisitorLastName(lastName);
+        record.setTakenDate(Instant.now());
+        visitorCountingRepository.save(record);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> delete(@RequestBody WorkWithBookRequest request) {
-        bookService.delete(request);
-        return new ResponseEntity<>(NO_CONTENT);
+    private void checkIfBorrowed(String bookName) {
+        var records = visitorCountingRepository.findAll().stream()
+                .filter(record -> record.getBookName().equals(bookName) && record.getReturnedDate() == null)
+                .collect(Collectors.toList());
+        if (!records.isEmpty()) {
+            Notification.show(String.format("Book %s has been already borrowed", bookName));
+            throw forbiddenAccessException(String.format("Book %s has been already borrowed", bookName));
+        }
     }
 
 }

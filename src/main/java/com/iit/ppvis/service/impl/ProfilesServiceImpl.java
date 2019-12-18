@@ -1,9 +1,9 @@
 package com.iit.ppvis.service.impl;
 
 import com.iit.ppvis.entity.Profile;
-import com.iit.ppvis.model.CreateProfileRequest;
 import com.iit.ppvis.model.WorkWithBookRequest;
 import com.iit.ppvis.model.WorkWithReadBookRequest;
+import com.iit.ppvis.model.enums.VisitorRole;
 import com.iit.ppvis.repository.CatalogRepository;
 import com.iit.ppvis.repository.ProfilesRepository;
 import com.iit.ppvis.service.ProfilesService;
@@ -11,11 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static com.iit.ppvis.common.utils.BookUtils.deleteBookFromList;
-import static com.iit.ppvis.common.utils.ExceptionUtils.entityAlreadyExistsException;
 import static com.iit.ppvis.common.utils.ExceptionUtils.entityNotFoundException;
 
 @Service
@@ -27,12 +23,11 @@ public class ProfilesServiceImpl implements ProfilesService {
 
     @Override
     @Transactional
-    public void create(CreateProfileRequest request) {
-        checkIfExists(request.getLastName());
+    public void create(String firstName, String lastName, VisitorRole role) {
         var visitor = new Profile();
-        visitor.setFirstName(request.getFirstName());
-        visitor.setLastName(request.getLastName());
-        visitor.setRole(request.getRole());
+        visitor.setFirstName(firstName);
+        visitor.setLastName(lastName);
+        visitor.setRole(role);
         profilesRepository.save(visitor);
     }
 
@@ -102,12 +97,6 @@ public class ProfilesServiceImpl implements ProfilesService {
         plannedToRead.add(request.getBookName());
         profile.setFavouriteBooks(plannedToRead);
         profilesRepository.save(profile);
-    }
-
-    private void checkIfExists(String lastName) {
-        if (profilesRepository.existsByLastName(lastName)) {
-            throw entityAlreadyExistsException(String.format("Profile of visitor %s already exists", lastName));
-        }
     }
 
 }

@@ -1,11 +1,24 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://maven.vaadin.com/vaadin-prereleases' }
+        maven { url 'http://maven.vaadin.com/vaadin-addons' }
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.1.8.RELEASE"
+    }
+}
+
 plugins {
-    id 'org.springframework.boot' version '2.2.1.RELEASE'
+    id 'org.springframework.boot' version '2.1.8.RELEASE'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id 'java'
 }
 
-group = 'com.iit.ppvis'
-version = '0.0.1-SNAPSHOT'
+ext {
+    lombokVersion = '1.18.8'
+    vaadinVersion = '12.0.6'
+}
 
 configurations {
     compileOnly {
@@ -15,20 +28,19 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url 'https://maven.vaadin.com/vaadin-prereleases' }
+    maven { url 'http://maven.vaadin.com/vaadin-addons' }
 }
+
+apply plugin: 'eclipse'
+
+group = 'com.iit.ppvis'
+version = '0.0.1-SNAPSHOT'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 }
-
-
-ext {
-    lombokVersion = '1.18.8'
-    springfoxVersion = '2.9.2'
-    vaadinVersion = '12.0.6'
-}
-
 
 dependencies {
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
@@ -39,16 +51,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation "org.projectlombok:lombok:$lombokVersion"
     implementation "org.flywaydb:flyway-core"
-    implementation "org.yaml:snakeyaml"
 
-    compileOnly 'org.projectlombok:lombok'
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+
     runtimeOnly 'org.postgresql:postgresql'
 
-    compile "io.springfox:springfox-bean-validators:$springfoxVersion"
-    compile "io.springfox:springfox-swagger2:$springfoxVersion"
-    compile "io.springfox:springfox-swagger-ui:$springfoxVersion"
-    compile "org.springframework:spring-jdbc"
-
-    testImplementation('org.springframework.boot:spring-boot-starter-test') 
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
-    

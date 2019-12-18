@@ -8,6 +8,7 @@ import com.iit.ppvis.model.enums.VisitorRole;
 import com.iit.ppvis.repository.CatalogRepository;
 import com.iit.ppvis.service.CatalogService;
 import com.iit.ppvis.service.ProfilesService;
+import com.vaadin.flow.component.notification.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,7 @@ public class CatalogServiceImpl implements CatalogService {
     @Transactional(readOnly = true)
     public CatalogRecord find(String bookName, List<BookStatus> statuses) {
         return catalogRepository.findByBookNameAndStatus(bookName, statuses).orElseThrow(() -> {
+            Notification.show(String.format("There is no record for book with name %s", bookName));
             throw entityNotFoundException(String.format("There is no record for book with name %s", bookName));
         });
     }
