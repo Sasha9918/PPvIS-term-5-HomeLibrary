@@ -1,13 +1,13 @@
 package com.iit.ppvis.service;
 
 import com.iit.ppvis.entity.StorageRecord;
-import com.iit.ppvis.model.AllBookInfo;
+import com.iit.ppvis.model.enums.Subject;
 
 public interface StorageService {
 
     StorageRecord find(String bookName);
 
-    void create(AllBookInfo info);
+    void create(String bookName, Subject subject, String genre);
 
     void delete(String bookName);
 

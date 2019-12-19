@@ -17,7 +17,7 @@ plugins {
 
 ext {
     lombokVersion = '1.18.8'
-    vaadinVersion = '12.0.6'
+    vaadinVersion = '14.1.2'
 }
 
 configurations {

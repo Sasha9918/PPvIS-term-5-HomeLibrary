@@ -1,12 +1,11 @@
 package com.iit.ppvis.service.impl;
 
 import com.iit.ppvis.entity.Profile;
-import com.iit.ppvis.model.WorkWithBookRequest;
-import com.iit.ppvis.model.WorkWithReadBookRequest;
 import com.iit.ppvis.model.enums.VisitorRole;
 import com.iit.ppvis.repository.CatalogRepository;
 import com.iit.ppvis.repository.ProfilesRepository;
 import com.iit.ppvis.service.ProfilesService;
+import com.vaadin.flow.component.notification.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,13 +32,15 @@ public class ProfilesServiceImpl implements ProfilesService {
 
     @Override
     @Transactional
-    public void updateReadList(WorkWithReadBookRequest request) {
-        var lastName = request.getVisitorLastName();
-        var profile = profilesRepository.findByLastName(request.getVisitorLastName()).orElseThrow(() ->
-                entityNotFoundException(String.format("There is no visitor with last name %s", lastName)));
+    public void updateReadList(String bookName, String lastName) {
+        var profile = profilesRepository.findByLastName(lastName).orElseThrow(() -> {
+                    Notification.show(String.format("There is no visitor with last name %s", lastName));
+                    throw entityNotFoundException(String.format("There is no visitor with last name %s", lastName));
+                }
+        );
 
         var read = profile.getReadBooks();
-        read.add(request.getBookName());
+        read.add(bookName);
         profile.setReadBooks(read);
         profilesRepository.save(profile);
     }
@@ -47,8 +48,10 @@ public class ProfilesServiceImpl implements ProfilesService {
     @Override
     @Transactional(readOnly = true)
     public Profile find(String lastName) {
-        return profilesRepository.findByLastName(lastName).orElseThrow(() ->
-                entityNotFoundException(String.format("There is no visitor with last name %s", lastName)));
+        return profilesRepository.findByLastName(lastName).orElseThrow(() -> {
+            Notification.show(String.format("There is no visitor with last name %s", lastName));
+            throw entityNotFoundException(String.format("There is no visitor with last name %s", lastName));
+        });
     }
 
     @Override
@@ -70,31 +73,35 @@ public class ProfilesServiceImpl implements ProfilesService {
 
     @Override
     @Transactional
-    public void updateFavouriteList(WorkWithReadBookRequest request) {
-        var lastName = request.getVisitorLastName();
-        var profile = profilesRepository.findByLastName(request.getVisitorLastName()).orElseThrow(() ->
-                entityNotFoundException(String.format("There is no visitor with last name %s", lastName)));
+    public void updateFavouriteList(String bookName, String lastName) {
+        var profile = profilesRepository.findByLastName(lastName).orElseThrow(() -> {
+            Notification.show(String.format("There is no visitor with last name %s", lastName));
+            throw entityNotFoundException(String.format("There is no visitor with last name %s", lastName));
+        });
 
         var favourite = profile.getFavouriteBooks();
-        favourite.add(request.getBookName());
+        favourite.add(bookName);
         profile.setFavouriteBooks(favourite);
         profilesRepository.save(profile);
+        Notification.show(String.format("Book %s successfully added to favourite", bookName));
     }
 
     @Override
     @Transactional
-    public void addToPlannedToReadList(WorkWithBookRequest request) {
-        var bookName = request.getBookName();
+    public void updatePlannedToReadList(String bookName, String lastName) {
         catalogRepository.findByBookName(bookName).orElseThrow(() -> {
+            Notification.show(String.format("There is no record for book with name %s", bookName));
             throw entityNotFoundException(String.format("There is no record for book with name %s", bookName));
         });
 
-        var lastName = request.getVisitorLastName();
-        var profile = profilesRepository.findByLastName(request.getVisitorLastName()).orElseThrow(() ->
-                entityNotFoundException(String.format("There is no visitor with last name %s", lastName)));
+        var profile = profilesRepository.findByLastName(lastName).orElseThrow(() -> {
+                    Notification.show(String.format("There is no visitor with last name %s", lastName));
+                    throw entityNotFoundException(String.format("There is no visitor with last name %s", lastName));
+                }
+        );
 
         var plannedToRead = profile.getPlannedToReadBooks();
-        plannedToRead.add(request.getBookName());
+        plannedToRead.add(bookName);
         profile.setFavouriteBooks(plannedToRead);
         profilesRepository.save(profile);
     }

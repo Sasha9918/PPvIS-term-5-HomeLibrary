@@ -45,5 +45,5 @@ public class Profile {
     @ElementCollection
     @Column(name = "read")
     private List<String> readBooks;
-
+//TODO: fix working with collections
 }

@@ -1,7 +1,7 @@
 package com.iit.ppvis.service.impl;
 
 import com.iit.ppvis.entity.StorageRecord;
-import com.iit.ppvis.model.AllBookInfo;
+import com.iit.ppvis.model.enums.Subject;
 import com.iit.ppvis.repository.StorageRepository;
 import com.iit.ppvis.service.StorageService;
 import com.vaadin.flow.component.notification.Notification;
@@ -28,12 +28,13 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     @Transactional
-    public void create(AllBookInfo info) {
+    public void create(String bookName, Subject subject, String genre) {
         var bookStorageRecord = new StorageRecord();
-        bookStorageRecord.setBookName(info.getBookName());
-        bookStorageRecord.setSubject(info.getSubject());
-        bookStorageRecord.setGenre(info.getGenre());
+        bookStorageRecord.setBookName(bookName);
+        bookStorageRecord.setSubject(subject);
+        bookStorageRecord.setGenre(genre);
         storageRepository.save(bookStorageRecord);
+        Notification.show("Successfully added to storage");
     }
 
     @Override

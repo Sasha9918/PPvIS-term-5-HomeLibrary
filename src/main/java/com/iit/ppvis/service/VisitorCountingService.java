@@ -1,12 +1,10 @@
 package com.iit.ppvis.service;
 
-import com.iit.ppvis.model.WorkWithBookRequest;
-
 public interface VisitorCountingService {
 
-    void create(WorkWithBookRequest request);
+    void create(String bookName, String visitorLastName);
 
-    void updateRecord(WorkWithBookRequest request);
+    void update(String bookName, String visitorLastName);
 
     void checkIfBorrowed(String bookName);
 

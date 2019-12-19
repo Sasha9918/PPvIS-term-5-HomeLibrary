@@ -1,21 +1,23 @@
 package com.iit.ppvis.api;
 
+import com.iit.ppvis.model.enums.VisitorRole;
 import com.iit.ppvis.repository.BookRepository;
 import com.iit.ppvis.repository.ProfilesRepository;
 import com.iit.ppvis.service.CatalogService;
 import com.iit.ppvis.service.ProfilesService;
 import com.iit.ppvis.service.StorageService;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import static com.iit.ppvis.common.utils.BookUtils.prepareBookStatus;
 import static com.iit.ppvis.common.utils.ExceptionUtils.entityNotFoundException;
-import static com.iit.ppvis.model.enums.VisitorRole.fromAuthority;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +41,33 @@ public class VisitorService extends VerticalLayout {
             label.add(findingLabel);
         });
 
-        label.add(bookName, visitorLastName, take);
+        var addBookToPlannedToRead = new Button("Добавить в список планируемых к прочтению", e ->
+                addToPlannedToReadList(bookName.getValue(), visitorLastName.getValue()));
+
+        label.add(bookName, visitorLastName, take, addBookToPlannedToRead);
+        return label;
+    }
+
+    public Label returnBook() {
+        var label = new Label();
+        var bookName = new TextField("Название книги");
+        var visitorLastName = new TextField("Фамилия посетителя");
+
+        var take = new Button("Вернуть", e -> {
+            addToReadList(bookName.getValue(), visitorLastName.getValue());
+            reportAboutReturning(bookName.getValue(), visitorLastName.getValue());
+        });
+
+        var rate = new Button("Оценить", e -> {
+            var mark = new IntegerField("Оценка");
+            rateBook(bookName.getValue(), visitorLastName.getValue(), mark.getValue());
+            label.add(mark);
+        });
+
+        var addToFavouriteBookList = new Button("Добавить в список любимых", e ->
+            addToFavouriteList(bookName.getValue(), visitorLastName.getValue()));
+
+        label.add(bookName, visitorLastName, take, rate, addToFavouriteBookList);
         return label;
     }
 
@@ -73,20 +101,40 @@ public class VisitorService extends VerticalLayout {
         ownerService.addVisitorCountingRecord(bookName, lastName);
     }
 
+    private void reportAboutReturning(String bookName, String lastName) {
+        ownerService.updateVisitorCountingRecord(bookName, lastName);
+    }
+
+    private void rateBook(String bookName, String lastName, Integer rate) {
+        catalogService.updateRate(bookName, lastName, rate);
+    }
+
+    private void addToFavouriteList(String bookName, String lastName) {
+        profilesService.updateFavouriteList(bookName, lastName);
+    }
+
+    private void addToReadList(String bookName, String lastName) {
+        profilesService.updateReadList(bookName, lastName);
+    }
+
+    private void addToPlannedToReadList(String bookName, String lastName) {
+        profilesService.updatePlannedToReadList(bookName, lastName);
+    }
+
     private Label createProfile() {
         var label = new Label();
 
         var firstName = new TextField("Имя");
         var lastName = new TextField("Фамилия");
-        var role = new TextField("Роль");//TODO: make enum
+        var role = new ComboBox<VisitorRole>("Роль");
+        role.setItems(VisitorRole.values());
 
         var take = new Button("Добавить", e -> {
-            profilesService.create(firstName.getValue(), lastName.getValue(), fromAuthority(role.getValue()));
+            profilesService.create(firstName.getValue(), lastName.getValue(), role.getValue());
             Notification.show("Success");
         });
         label.add(firstName, lastName, role, take);
         return label;
     }
-
 
 }

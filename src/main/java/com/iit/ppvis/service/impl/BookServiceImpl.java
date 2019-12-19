@@ -3,9 +3,9 @@ package com.iit.ppvis.service.impl;
 import com.iit.ppvis.entity.Book;
 import com.iit.ppvis.model.AllBookInfo;
 import com.iit.ppvis.model.WorkWithBookRequest;
-import com.iit.ppvis.model.WorkWithReadBookRequest;
 import com.iit.ppvis.repository.BookRepository;
 import com.iit.ppvis.service.*;
+import com.vaadin.flow.component.notification.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,25 +44,22 @@ public class BookServiceImpl implements BookService {
         request.setVisitorLastName(visitorLastName);
 
         visitorCountingService.checkIfBorrowed(bookName);
-        visitorCountingService.create(request);
 
         return createAllBookInfo(book, catalogRecord, storageRecord);
     }
 
     @Override
     @Transactional
-    public void addToLibrary(AllBookInfo info) {
-        checkIfExists(info.getBookName());
+    public void addToLibrary(String author, String bookName, String publisher, Integer publishingYear) {
+        checkIfExists(bookName);
 
         var book = new Book();
-        book.setAuthor(info.getAuthor());
-        book.setBookName(info.getBookName());
-        book.setPublisher(info.getPublisher());
-        book.setPublishingYear(info.getPublishingYear());
-
-        catalogService.create(info);
-        storageService.create(info);
+        book.setAuthor(author);
+        book.setBookName(bookName);
+        book.setPublisher(publisher);
+        book.setPublishingYear(publishingYear);
         bookRepository.save(book);
+        Notification.show("Information about book is successfully saved");
     }
 
     @Override
@@ -77,25 +74,9 @@ public class BookServiceImpl implements BookService {
         storageService.delete(bookName);
     }
 
-    @Override
-    public void returnBook(WorkWithBookRequest request) {
-        visitorCountingService.updateRecord(request);
-    }
-
-    @Override
-    public void addToReadList(WorkWithReadBookRequest request) {
-        catalogService.updateRate(request);
-        profilesService.updateReadList(request);
-    }
-
-    @Override
-    public void addToFavouriteList(WorkWithReadBookRequest request) {
-        catalogService.updateRate(request);
-        profilesService.updateFavouriteList(request);
-    }
-
     private void checkIfExists(String bookName) {
         if (bookRepository.existsByBookName(bookName)) {
+            Notification.show(String.format("Book %s already exists", bookName));
             throw entityAlreadyExistsException(String.format("Book %s already exists", bookName));
         }
     }

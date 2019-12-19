@@ -1,9 +1,9 @@
 package com.iit.ppvis.service.impl;
 
 import com.iit.ppvis.entity.VisitorCounting;
-import com.iit.ppvis.model.WorkWithBookRequest;
 import com.iit.ppvis.repository.VisitorCountingRepository;
 import com.iit.ppvis.service.VisitorCountingService;
+import com.vaadin.flow.component.notification.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,22 +22,28 @@ public class VisitorCountingServiceImpl implements VisitorCountingService {
 
     @Override
     @Transactional
-    public void create(WorkWithBookRequest request) {
+    public void create(String bookName, String visitorLastName) {
+        checkIfBorrowed(bookName);
         var record = new VisitorCounting();
-        record.setBookName(request.getBookName());
-        record.setVisitorLastName(request.getVisitorLastName());
+        record.setBookName(bookName);
+        record.setVisitorLastName(visitorLastName);
         record.setTakenDate(Instant.now());
         visitorCountingRepository.save(record);
+        Notification.show("Book is successfully taken");
     }
 
     @Override
     @Transactional
-    public void updateRecord(WorkWithBookRequest request) {
-        var record = visitorCountingRepository.findByBookNameAndVisitorLastName(request.getBookName(),
-                request.getVisitorLastName()).orElseThrow(() ->
-                entityNotFoundException(String.format("Book with name %s wasn't taken", request.getBookName())));
+    public void update(String bookName, String visitorLastName) {
+        var record = visitorCountingRepository.findByBookNameAndVisitorLastName(bookName, visitorLastName)
+                .orElseThrow(() -> {
+                            Notification.show(String.format("Book with name %s wasn't taken", bookName));
+                            throw entityNotFoundException(String.format("Book with name %s wasn't taken", bookName));
+                        }
+                );
         record.setReturnedDate(Instant.now());
         visitorCountingRepository.save(record);
+        Notification.show("Book is successfully returned");
     }
 
     @Override
