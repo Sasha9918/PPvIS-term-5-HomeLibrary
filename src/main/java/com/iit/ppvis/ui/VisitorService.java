@@ -34,7 +34,7 @@ public class VisitorService extends VerticalLayout {
     private final BookRepository bookRepository;
     private final ProfilesRepository profilesRepository;
 
-    Label takeBook() {
+    public Label takeBook() {
         var label = new Label();
         var bookName = new TextField("Название книги");
         var visitorLastName = new TextField("Фамилия посетителя");
@@ -51,7 +51,7 @@ public class VisitorService extends VerticalLayout {
         return label;
     }
 
-    Label returnBook() {
+    public Label returnBook() {
         var label = new Label();
         var bookName = new TextField("Название книги");
         var visitorLastName = new TextField("Фамилия посетителя");
@@ -68,7 +68,7 @@ public class VisitorService extends VerticalLayout {
         return label;
     }
 
-    Label rateBook() {
+    public Label rateBook() {
         var bookName = new TextField("Название");
         var visitorLastName = new TextField("Фамилия владельца");
         var mark = new IntegerField("Оценка");
