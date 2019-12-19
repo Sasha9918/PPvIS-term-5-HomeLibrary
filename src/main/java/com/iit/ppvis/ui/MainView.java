@@ -1,9 +1,8 @@
 package com.iit.ppvis.ui;
 
-import com.iit.ppvis.api.OwnerService;
-import com.iit.ppvis.api.VisitorService;
-import com.iit.ppvis.model.enums.BookStatus;
-import com.iit.ppvis.model.enums.Subject;
+import com.iit.ppvis.entity.enums.BookStatus;
+import com.iit.ppvis.entity.enums.Genre;
+import com.iit.ppvis.entity.enums.Subject;
 import com.iit.ppvis.service.BookService;
 import com.iit.ppvis.service.ProfilesService;
 import com.vaadin.flow.component.button.Button;
@@ -19,9 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import static com.iit.ppvis.model.enums.VisitorRole.ROLE_OWNER;
-
-//TODO: maybe play with font
+import static com.iit.ppvis.entity.enums.VisitorRole.ROLE_OWNER;
 
 @Route
 @Component
@@ -46,13 +43,11 @@ public class MainView extends VerticalLayout {
         var buttonsLayout = new HorizontalLayout();
 
         var take = new Button("Взять книгу", e -> {
-            removeAll();
             var takingLabel = visitorService.takeBook();
             add(takingLabel);
         });
 
         var add = new Button("Добавить книгу", e -> {
-            removeAll();
             var bookName = new TextField("Название");
             var author = new TextField("Автор");
             var publishingYear = new IntegerField("Год издания");
@@ -61,10 +56,11 @@ public class MainView extends VerticalLayout {
             var status = new ComboBox<BookStatus>("Статус");
             status.setItems(BookStatus.values());
 
-            var subject = new ComboBox<Subject>("Статус");
+            var subject = new ComboBox<Subject>("Направление");
             subject.setItems(Subject.values());
 
-            var genre = new TextField("Жанр");
+            var genre = new ComboBox<Genre>("Жанр");
+            genre.setItems(Genre.values());
             var ownerLastName = new TextField("Фамилия владельца");
 
             var addBook = new Button("Добавить", event -> {
@@ -76,22 +72,40 @@ public class MainView extends VerticalLayout {
                     ownerService.addToCatalog(bookName.getValue(), status.getValue());
                     ownerService.addToStorage(bookName.getValue(), subject.getValue(), genre.getValue());
                 } else {
-                    Notification.show("Only owners can add books to library");
+                    Notification.show("Только владельцы библиотеки могут добавлять книги");
                 }
             });
             add(bookName, author, publishingYear, publisher, status, subject, genre, ownerLastName, addBook);
         });
 
+        var rate = new Button("Оценить книгу", e -> {
+            var ratingLabel = visitorService.rateBook();
+            add(ratingLabel);
+        });
+
         var takeBack = new Button("Вернуть книгу", e -> {
-            removeAll();
             var returningLabel = visitorService.returnBook();
             add(returningLabel);
         });
 
         var delete = new Button("Удалить книгу", e -> {
-            // enterpriseService.delete(processNumbers(id.getValue(), "Id"));
+            var bookName = new TextField("Название");
+            var ownerLastName = new TextField("Фамилия владельца");
+
+            var deleteBook = new Button("Удалить", event -> {
+                var owner = profilesService.find(ownerLastName.getValue());
+
+                if (owner.getRole().equals(ROLE_OWNER)) {
+                    ownerService.deleteBookFromProfiles(bookName.getValue());
+                    ownerService.deleteBookRecords(bookName.getValue());
+                    ownerService.deleteBook(bookName.getValue());
+                } else {
+                    Notification.show("Только владельцы библиотеки могут удалять книги");
+                }
+            });
+            add(bookName, ownerLastName, deleteBook);
         });
-        buttonsLayout.add(take, add, takeBack, delete);
+        buttonsLayout.add(take, add, takeBack, rate, delete);
         add(welcome, buttonsLayout);
     }
 

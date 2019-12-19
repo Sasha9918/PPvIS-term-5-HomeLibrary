@@ -11,4 +11,3 @@ public class HomeLibraryApplication {
     }
 
 }
-//TODO: ideally: have main view, from this different calls to necessary services

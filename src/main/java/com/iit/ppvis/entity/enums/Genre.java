@@ -1,0 +1,8 @@
+package com.iit.ppvis.entity.enums;
+
+public enum Genre {
+
+    DETECTIVE, FAIRYTALE, FANTASY, LEGEND, NOVEL, POETRY, ASTRONOMY, BIOLOGY, MATH, CHEMISTRY, MEDICINE, PSYCHOLOGY,
+    PHYSICS
+
+}

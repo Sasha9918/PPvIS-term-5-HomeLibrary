@@ -1,4 +1,4 @@
-package com.iit.ppvis.model.enums;
+package com.iit.ppvis.entity.enums;
 
 public enum Subject {
 
