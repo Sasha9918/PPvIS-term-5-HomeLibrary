@@ -21,7 +21,7 @@ public class OwnerService {
     private final StorageService storageService;
     private final VisitorCountingService visitorCountingService;
 
-    private final BookRepository bookRepository;
+    protected final BookRepository bookRepository;
 
     public void addToCatalog(String bookName, BookStatus status){
         catalogService.create(bookName, status);

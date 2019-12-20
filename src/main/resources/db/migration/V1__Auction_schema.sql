@@ -5,5 +5,8 @@ ALTER TABLE visitor_profile
 
 CREATE TABLE auction
 (
-    -- TODO: think about auction table architecture
+    name        VARCHAR(255) PRIMARY KEY,
+    books       text[],
+    started_at  TIMESTAMP NOT NULL,
+    finished_at TIMESTAMP NOT NULL
 );

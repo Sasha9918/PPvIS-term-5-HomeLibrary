@@ -3,7 +3,9 @@ package com.iit.ppvis.extended.ui;
 import com.iit.ppvis.entity.enums.BookStatus;
 import com.iit.ppvis.entity.enums.Genre;
 import com.iit.ppvis.entity.enums.Subject;
-import com.iit.ppvis.extended.service.ExtendedProfilesService;
+import com.iit.ppvis.entity.enums.VisitorRole;
+import com.iit.ppvis.extended.service.AccountService;
+import com.iit.ppvis.extended.service.AuctionService;
 import com.iit.ppvis.service.BookService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -21,23 +23,42 @@ import org.springframework.stereotype.Component;
 import static com.iit.ppvis.entity.enums.VisitorRole.ROLE_OWNER;
 
 @Component
-@Route("Auction")
+@Route("extended")
 @RequiredArgsConstructor
-public class LibraryView extends VerticalLayout {
+public class ExtendedMainView extends VerticalLayout {
 
+    private final AuctionService auctionService;
     private final BookService bookService;
     private final ExtendedOwnerService extendedOwnerService;
-    private final ExtendedProfilesService extendedProfilesService;
+    private final AccountService accountService;
     private final ExtendedVisitorService extendedVisitorService;
 
     @Bean
-    public void init() {
+    public void extendedInit() {
         var welcome = new Label("Добро пожаловать");
-        var start = new Button("Посетить библиотеку", e -> initStart());
+        var start = new Button("Посетить библиотеку", e -> {
+            removeAll();
+
+            var firstName = new TextField("Имя");
+            var lastName = new TextField("Фамилия");
+            var login = new TextField("Логин");
+            var password = new TextField("Пароль");
+            var role = new ComboBox<VisitorRole>("Роль");
+            role.setItems(VisitorRole.values());
+
+            var signIn = new Button("Авторизоваться", event -> {
+                if (extendedVisitorService.signIn(login.getValue(), password.getValue())) {
+                    initStart(login.getValue());
+                }
+            });
+            var signUp = new Button("Зарегистрироваться", event -> extendedVisitorService.signUp(
+                    firstName.getValue(), lastName.getValue(), login.getValue(), password.getValue(), role.getValue()));
+            add(firstName, lastName, login, password, role, signIn, signUp);
+        });
         add(welcome, start);
     }
 
-    private void initStart() {
+    private void initStart(String login) {
         removeAll();
         var welcome = new Label("Домашняя библиотека");
         var buttonsLayout = new HorizontalLayout();
@@ -64,7 +85,7 @@ public class LibraryView extends VerticalLayout {
             var ownerLastName = new TextField("Фамилия владельца");
 
             var addBook = new Button("Добавить", event -> {
-                var owner = extendedProfilesService.find(ownerLastName.getValue());
+                var owner = accountService.find(ownerLastName.getValue());
 
                 if (owner.getRole().equals(ROLE_OWNER)) {
                     bookService.addToLibrary(author.getValue(), bookName.getValue(), publisher.getValue(),
@@ -93,7 +114,7 @@ public class LibraryView extends VerticalLayout {
             var ownerLastName = new TextField("Фамилия владельца");
 
             var deleteBook = new Button("Удалить", event -> {
-                var owner = extendedProfilesService.find(ownerLastName.getValue());
+                var owner = accountService.find(ownerLastName.getValue());
 
                 if (owner.getRole().equals(ROLE_OWNER)) {
                     extendedOwnerService.deleteBookFromProfiles(bookName.getValue());
@@ -106,9 +127,20 @@ public class LibraryView extends VerticalLayout {
             add(bookName, ownerLastName, deleteBook);
         });
 
-        var hold = new Button("Провести аукцион", e -> extendedOwnerService.holdAuction());
+        var hold = new Button("Провести аукцион", e -> {
+            var holdingLabel = extendedOwnerService.holdAuction(login);
+            add(holdingLabel);
+        });
 
-        buttonsLayout.add(take, add, takeBack, rate, hold, delete);
+        var visit = new Button("Купить книгу", e -> {
+            var bookName = new TextField("Название книги");
+            var auctionName = new TextField("Название аукциона");
+            var buy = new Button("Купить", event -> auctionService.buyBook(bookName.getValue(),
+                    auctionName.getValue()));
+            add(bookName, auctionName, buy);
+        });
+
+        buttonsLayout.add(take, add, takeBack, rate, hold, visit, delete);
         add(welcome, buttonsLayout);
     }
 
