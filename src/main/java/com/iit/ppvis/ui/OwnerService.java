@@ -21,13 +21,13 @@ public class OwnerService {
     private final StorageService storageService;
     private final VisitorCountingService visitorCountingService;
 
-    private final BookRepository bookRepository;
+    protected final BookRepository bookRepository;
 
-    void addToCatalog(String bookName, BookStatus status){
+    public void addToCatalog(String bookName, BookStatus status){
         catalogService.create(bookName, status);
     }
 
-    void addToStorage(String bookName, Subject subject, Genre genre) {
+    public void addToStorage(String bookName, Subject subject, Genre genre) {
         storageService.create(bookName, subject, genre);
     }
 
@@ -39,18 +39,18 @@ public class OwnerService {
         visitorCountingService.update(bookName, lastName);
     }
 
-    void deleteBookFromProfiles(String bookName) {
+    public void deleteBookFromProfiles(String bookName) {
         profilesService.deleteBookFromLists(bookName);
         Notification.show("Книга успешно удалена из списков пользователей");
     }
 
-    void deleteBookRecords(String bookName) {
+    public void deleteBookRecords(String bookName) {
         catalogService.delete(bookName);
         storageService.delete(bookName);
         Notification.show("Книга успешно удалена из хранилища и каталога");
     }
 
-    void deleteBook(String bookName) {
+    public void deleteBook(String bookName) {
         bookRepository.deleteById(bookName);
         Notification.show("Книга успешно удалена");
     }

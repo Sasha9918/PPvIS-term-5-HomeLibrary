@@ -34,7 +34,7 @@ public class VisitorService extends VerticalLayout {
     private final BookRepository bookRepository;
     private final ProfilesRepository profilesRepository;
 
-    Label takeBook() {
+    public Label takeBook() {
         var label = new Label();
         var bookName = new TextField("Название книги");
         var visitorLastName = new TextField("Фамилия посетителя");
@@ -51,7 +51,7 @@ public class VisitorService extends VerticalLayout {
         return label;
     }
 
-    Label returnBook() {
+    public Label returnBook() {
         var label = new Label();
         var bookName = new TextField("Название книги");
         var visitorLastName = new TextField("Фамилия посетителя");
@@ -68,7 +68,7 @@ public class VisitorService extends VerticalLayout {
         return label;
     }
 
-    Label rateBook() {
+    public Label rateBook() {
         var bookName = new TextField("Название");
         var visitorLastName = new TextField("Фамилия владельца");
         var mark = new IntegerField("Оценка");
@@ -85,7 +85,7 @@ public class VisitorService extends VerticalLayout {
         return label;
     }
 
-    private Label findVisitor(String bookName, String lastName) {
+    public Label findVisitor(String bookName, String lastName) {
         if (profilesRepository.existsById(lastName)) {
             findBook(bookName, lastName);
             return new Label();
@@ -95,6 +95,20 @@ public class VisitorService extends VerticalLayout {
             label.add(createProfile);
             return label;
         }
+    }
+
+    protected void findBook(String bookName, String lastName) {
+        var visitor = profilesService.find(lastName);
+        var statuses = visitor.getRole().equals(ROLE_OWNER) ? List.of(PRIVATE, PUBLIC) : List.of(PUBLIC);
+
+        bookRepository.findById(bookName).orElseThrow(() -> {
+            Notification.show(String.format("Книга %s не существует", bookName));
+            throw new NullPointerException();
+        });
+        catalogService.find(bookName, statuses);
+        storageService.find(bookName);
+
+        reportAboutTaking(bookName, lastName);
     }
 
     private Label createProfile() {
@@ -111,20 +125,6 @@ public class VisitorService extends VerticalLayout {
         });
         label.add(firstName, lastName, role, take);
         return label;
-    }
-
-    private void findBook(String bookName, String lastName) {
-        var visitor = profilesService.find(lastName);
-        var statuses = visitor.getRole().equals(ROLE_OWNER) ? List.of(PRIVATE, PUBLIC) : List.of(PUBLIC);
-
-        bookRepository.findById(bookName).orElseThrow(() -> {
-            Notification.show(String.format("Книга %s не существует", bookName));
-            throw new NullPointerException();
-        });
-        catalogService.find(bookName, statuses);
-        storageService.find(bookName);
-
-        reportAboutTaking(bookName, lastName);
     }
 
     private void reportAboutTaking(String bookName, String lastName) {
