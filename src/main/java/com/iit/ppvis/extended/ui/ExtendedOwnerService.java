@@ -27,8 +27,6 @@ import static com.iit.ppvis.entity.enums.VisitorRole.ROLE_VISITOR;
 @Service
 public class ExtendedOwnerService extends OwnerService {
 
-    private static final long AUCTION_DURATION = 36000;
-
     private final AccountRepository accountRepository;
     private final AuctionRepository auctionRepository;
 
@@ -41,7 +39,7 @@ public class ExtendedOwnerService extends OwnerService {
         this.auctionRepository = auctionRepository;
     }
 
-    Label holdAuction(String login) {
+    public Label holdAuction(String login) {
         var account = accountRepository.findByLogin(login).orElseThrow(IllegalArgumentException::new);
         if (account.getRole().equals(ROLE_VISITOR)) {
             Notification.show("Аукционы может проводить только владелец библиотеки");
@@ -65,7 +63,7 @@ public class ExtendedOwnerService extends OwnerService {
             auction.setName(name.getValue());
             auction.setBooks(auctionBooks);
             auction.setStartedAt(time);
-            auction.setFinishedAt(time.plusSeconds(AUCTION_DURATION));
+            auction.setFinishedAt(time.plusSeconds(36000));
             auctionRepository.save(auction);
             Notification.show("Аукцион успешно начат");
         });

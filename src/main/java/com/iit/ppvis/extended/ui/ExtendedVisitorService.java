@@ -42,11 +42,11 @@ public class ExtendedVisitorService extends VisitorService {
         }
     }
 
-    void signUp(String firstName, String lastName, String login, String password, VisitorRole role) {
+    public void signUp(String firstName, String lastName, String login, String password, VisitorRole role) {
         accountService.create(firstName, lastName, login, password, role);
     }
 
-    boolean signIn(String login, String password) {
+    public boolean signIn(String login, String password) {
         accountRepository.findByLoginAndPassword(login, password).orElseThrow(() -> {
             Notification.show("Неверный логин и/или пароль");
             throw new IllegalArgumentException();
